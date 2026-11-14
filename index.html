@@ -150,12 +150,12 @@
         <div class="absolute -bottom-8 -left-3 w-[19rem] rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-lift backdrop-blur sm:-left-10">
           <div class="mb-2 flex items-center justify-between">
             <p class="text-[11px] font-semibold uppercase tracking-[.14em] text-slate-500">Strategy Lab</p>
-            <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>Live model</span>
+            <a href="#lab" class="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-semibold text-brand-700 hover:bg-brand-100">Members only</a>
           </div>
           <div class="grid grid-cols-3 gap-2">
-            <div><p class="text-[10px] text-slate-500">CKD retail</p><p class="num font-display text-base font-bold text-ink" id="heroRetail">–</p></div>
-            <div><p class="text-[10px] text-slate-500">Max kit</p><p class="num font-display text-base font-bold text-ink" id="heroMaxKit">–</p></div>
-            <div><p class="text-[10px] text-slate-500">Excise red.</p><p class="num font-display text-base font-bold text-ink" id="heroExcise">–</p></div>
+            <div><p class="text-[10px] text-slate-500">CKD retail</p><p class="num font-display text-base font-bold text-ink" id="heroRetail">🔒</p></div>
+            <div><p class="text-[10px] text-slate-500">Max kit</p><p class="num font-display text-base font-bold text-ink" id="heroMaxKit">🔒</p></div>
+            <div><p class="text-[10px] text-slate-500">Excise red.</p><p class="num font-display text-base font-bold text-ink" id="heroExcise">🔒</p></div>
           </div>
         </div>
       </div>
@@ -397,131 +397,26 @@
 
 <!-- ============ STRATEGY LAB ============ -->
 <section id="lab" class="mx-auto max-w-7xl scroll-mt-20 px-5 py-20 lg:px-8 lg:py-28">
-  <div class="flex flex-wrap items-end justify-between gap-6 reveal">
-    <div class="max-w-2xl">
-      <p class="text-xs font-semibold uppercase tracking-[.16em] text-brand-700">Strategy Lab</p>
-      <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">Malaysia CKD Pricing Simulator</h2>
-      <p class="mt-4 text-lg text-slate-600">Move the sliders to see how kit price, FX, excise relief and channel margins flow through to the retail price, and how much kit-price headroom a target retail price leaves.</p>
-    </div>
-    <div class="flex flex-wrap gap-2">
-      <button id="btnReset" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-ink hover:bg-slate-50">Reset to baseline</button>
-      <button id="btnShare" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-ink hover:bg-slate-50">Copy scenario link</button>
-    </div>
-  </div>
-
-  <div class="mt-10 grid gap-6 lg:grid-cols-12">
-    <!-- ---------- INPUTS ---------- -->
-    <aside class="rounded-2xl border border-slate-200 bg-white p-6 shadow-card lg:col-span-4" aria-label="Simulation inputs">
-      <h3 class="font-display text-base font-bold text-ink">Input parameters</h3>
-      <p class="mt-1 text-xs text-slate-500">Illustrative baseline values. Adjust to your own case.</p>
-      <div id="sliders" class="mt-6 space-y-6"></div>
-
-      <details class="mt-6 rounded-xl border border-slate-200 bg-slate-50/60">
-        <summary class="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-semibold text-ink">
-          Cost waterfall (MYR / car)
-          <svg class="chev h-4 w-4 text-slate-500 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
-        </summary>
-        <div id="costInputs" class="grid grid-cols-2 gap-3 px-4 pb-4"></div>
-      </details>
-
-      <details class="mt-3 rounded-xl border border-amber-200 bg-amber-50/50">
-        <summary class="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-semibold text-ink">
-          Tax model (unvalidated)
-          <svg class="chev h-4 w-4 text-slate-500 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
-        </summary>
-        <div class="space-y-3 px-4 pb-4">
-          <div id="taxInputs" class="grid grid-cols-2 gap-3"></div>
-          <label class="flex items-center justify-between gap-3 text-sm text-slate-700">
-            <span>Linear tax sensitivity</span>
-            <input type="checkbox" id="taxLinear" class="h-4 w-4 accent-blue-600" checked />
-          </label>
-          <p class="text-xs leading-relaxed text-amber-800">Excise + sales tax is a combined reference value, scaled linearly with the remaining tax fraction. It's a rough scenario estimate, not a calculation under Malaysian excise or sales-tax law.</p>
-        </div>
-      </details>
-    </aside>
-
-    <!-- ---------- RESULTS ---------- -->
-    <div class="space-y-6 lg:col-span-8">
-      <!-- KPI tiles -->
-      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
-          <p class="text-xs font-medium text-slate-500">Retail price (calculated)</p>
-          <p class="num mt-1 font-display text-3xl font-bold text-ink" id="kRetail">–</p>
-          <p class="num mt-1 text-sm" id="kGap">–</p>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
-          <p class="text-xs font-medium text-slate-500">Ex-works / importer price</p>
-          <p class="num mt-1 font-display text-3xl font-bold text-ink" id="kExw">–</p>
-          <p class="num mt-1 text-sm text-slate-500" id="kCif">–</p>
-        </div>
-        <div class="rounded-2xl border border-brand-200 bg-brand-50/60 p-5 shadow-card">
-          <p class="text-xs font-medium text-brand-800">Max kit price at target retail</p>
-          <p class="num mt-1 font-display text-3xl font-bold text-ink" id="kMaxKit">–</p>
-          <p class="num mt-1 text-sm" id="kHeadroom">–</p>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
-          <p class="text-xs font-medium text-slate-500">Channel margins / car</p>
-          <p class="num mt-1 font-display text-3xl font-bold text-ink" id="kMargins">–</p>
-          <p class="num mt-1 text-sm text-slate-500" id="kMarginsSplit">–</p>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
-          <p class="text-xs font-medium text-slate-500">Excise + sales tax / car</p>
-          <p class="num mt-1 font-display text-3xl font-bold text-ink" id="kTax">–</p>
-          <p class="num mt-1 text-sm text-slate-500" id="kTaxShare">–</p>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
-          <p class="text-xs font-medium text-slate-500">Annual kit value <span class="text-slate-400">(volume ext.)</span></p>
-          <p class="num mt-1 font-display text-3xl font-bold text-ink" id="kAnnual">–</p>
-          <p class="num mt-1 text-sm text-slate-500" id="kAnnualEur">–</p>
-        </div>
+  <div class="reveal mx-auto max-w-3xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lift">
+    <div class="grid md:grid-cols-5">
+      <div class="relative bg-gradient-to-br from-brand-600 to-brand-800 p-8 text-white md:col-span-2">
+        <div class="absolute inset-0 opacity-20" style="background-image:radial-gradient(#fff 1px,transparent 1px);background-size:14px 14px"></div>
+        <svg class="relative h-12 w-12" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.4" fill="currentColor"/></svg>
+        <p class="relative mt-6 text-xs font-semibold uppercase tracking-[.16em] text-brand-100">Strategy Lab</p>
+        <p class="relative mt-2 font-display text-2xl font-bold leading-tight">Malaysia CKD Pricing Simulator</p>
+        <p class="relative mt-3 text-sm text-brand-100">Interactive pricing waterfall, reverse target costing, sensitivities and scenario comparison.</p>
       </div>
-
-      <!-- Charts -->
-      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <h3 class="font-display text-base font-bold text-ink" id="chartTitle">Price waterfall</h3>
-          <div class="inline-flex rounded-lg bg-slate-100 p-1 text-sm font-medium text-slate-600" role="tablist">
-            <button class="tab rounded-md px-3 py-1.5 tab-active" data-tab="waterfall" role="tab">Waterfall</button>
-            <button class="tab rounded-md px-3 py-1.5" data-tab="excise" role="tab">Excise sensitivity</button>
-            <button class="tab rounded-md px-3 py-1.5" data-tab="kit" role="tab">Kit sensitivity</button>
-            <button class="tab rounded-md px-3 py-1.5" data-tab="table" role="tab">Calculation</button>
-          </div>
+      <form id="labUnlock" class="p-8 md:col-span-3" autocomplete="off">
+        <h3 class="font-display text-xl font-bold text-ink">Restricted access</h3>
+        <p class="mt-2 text-sm text-slate-600">This simulator is available to invited viewers. Enter the password you received to open it.</p>
+        <label for="labPw" class="mt-6 block text-sm font-medium text-slate-700">Password</label>
+        <div class="mt-1.5 flex gap-2">
+          <input id="labPw" type="password" required class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2.5 text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100" placeholder="Enter password" />
+          <button id="labBtn" class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 disabled:opacity-60">Unlock</button>
         </div>
-        <p class="mt-1 text-sm text-slate-500" id="chartSub">How each cost and margin builds up to the retail price (MYR per car).</p>
-        <div class="relative mt-5 h-[340px]" id="chartWrap"><canvas id="chart"></canvas></div>
-        <div id="tableWrap" class="mt-5 hidden overflow-x-auto"></div>
-      </div>
-
-      <!-- Scenario compare -->
-      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h3 class="font-display text-base font-bold text-ink">Scenario comparison</h3>
-            <p class="text-sm text-slate-500">Store the current inputs as A or B and compare them side by side.</p>
-          </div>
-          <div class="flex gap-2">
-            <button class="saveScn rounded-lg bg-ink px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800" data-s="A">Save as A</button>
-            <button class="saveScn rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white hover:bg-brand-700" data-s="B">Save as B</button>
-          </div>
-        </div>
-        <div id="scnTable" class="mt-4 overflow-x-auto text-sm"></div>
-      </div>
-
-      <details class="rounded-2xl border border-slate-200 bg-white shadow-card">
-        <summary class="flex cursor-pointer items-center justify-between px-6 py-4 text-sm font-semibold text-ink">
-          Methodology &amp; model notes
-          <svg class="chev h-4 w-4 text-slate-500 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
-        </summary>
-        <dl class="grid gap-x-6 gap-y-4 px-6 pb-6 text-sm sm:grid-cols-[160px_1fr]">
-          <dt class="font-semibold text-ink">Forward calc</dt><dd class="text-slate-600">CIF = FX × kit price. Ex-works / importer price = CIF + import duty + localisation + assembly + transport + other ex-works + VGM fixed + tax. Distributor margin = ex-works × m<sub>d</sub>/(1−m<sub>d</sub>). Dealer margin = (ex-works + warranty + other + distributor margin) × m<sub>r</sub>/(1−m<sub>r</sub>). Retail = sum of all.</dd>
-          <dt class="font-semibold text-ink">Reverse calc</dt><dd class="text-slate-600">Max ex-works = (target × (1−m<sub>r</sub>) − warranty − other) × (1−m<sub>d</sub>). Max CIF = max ex-works − local costs and tax. Max kit price = max CIF ÷ FX.</dd>
-          <dt class="font-semibold text-ink">Tax</dt><dd class="text-slate-600">Tax = reference tax × (1 − reduction) ÷ (1 − reference reduction). This is an approximation for scenarios only and has not been checked against Malaysian excise or sales-tax law.</dd>
-          <dt class="font-semibold text-ink">Margins</dt><dd class="text-slate-600">Distributor and dealer margins are treated as gross margin on their own selling price. The original may use fixed amounts or a different margin base.</dd>
-          <dt class="font-semibold text-ink">Volume</dt><dd class="text-slate-600">Annual volume isn't in the source workbook. It only drives the annual kit value (kit price × volume).</dd>
-          <dt class="font-semibold text-ink">Validate before use</dt><dd class="text-slate-600">Confirm the taxable OMV base, how the ED/ST reduction is applied, assembly cost scope, the 6% importer margin base, the 5% dealer margin base, and whether VAT/SST applies.</dd>
-        </dl>
-      </details>
-      <p class="text-xs text-slate-400">Simplified demonstration model for illustration. Not a validated Malaysian tax or CKD business-case calculation.</p>
+        <p id="labErr" class="mt-2 hidden text-sm font-medium text-red-700">Incorrect password. Please try again.</p>
+        <p class="mt-6 text-xs text-slate-500">No password yet? <a href="#contact" class="font-semibold text-brand-700 hover:text-brand-800">Request access →</a></p>
+      </form>
     </div>
   </div>
 </section>
@@ -599,26 +494,7 @@
 /* =====================================================================
    1. MODEL: exact replication of "Malaysia_CKD_Simulator_Updated.xlsx"
    ===================================================================== */
-const BASELINE = {
-  fx: 4.6767,          // B5  FX EUR→MYR
-  kit: 12471,          // B6  CKD kit / CIF landed (EUR/car)
-  target: 113644,      // B7  Target retail price (MYR/car)
-  excise: 0.85,        // B8  Excise duty reduction
-  distM: 0.06,         // B9  Distributor margin
-  dealerM: 0.05,       // B10 Dealer margin
-  assembly: 1468,      // B11
-  localisation: 2427,  // B12
-  importDuty: 158,     // B13
-  transport: 615,      // B14
-  otherExw: 53,        // B15
-  vgm: 408,            // B16 VGM fixed costs
-  warranty: 641,       // B17 Warranty (3 yrs)
-  otherCosts: 568,     // B18
-  taxRef: 2274,        // B19 Excise/sales tax at reference reduction
-  taxRefRed: 0.85,     // B20 Reference reduction
-  taxLinear: 1,        // B21 1 = linear
-  volume: 5000,        // web extension (not in workbook): annual units
-};
+let BASELINE = null;
 
 function compute(p) {
   const cif   = p.fx * p.kit;                                              // B24
@@ -643,7 +519,10 @@ function compute(p) {
 /* =====================================================================
    2. STATE + INPUT DEFINITIONS
    ===================================================================== */
-let S = { ...BASELINE };
+let S;
+function initLab(data) {
+BASELINE = data;
+S = { ...BASELINE };
 
 const SLIDERS = [
   { k:'kit',     label:'CKD kit price (CIF landed)', unit:'EUR', min:6000,  max:25000,  step:50,   fmt:v=>'€ '+fmtInt(v) },
@@ -910,6 +789,9 @@ document.getElementById('btnShare').addEventListener('click', () => {
   else prompt('Copy this link:', url);
 });
 document.getElementById('btnReset').addEventListener('click', () => { S = { ...BASELINE }; update(); toast('Reset to baseline'); });
+loadFromHash();
+update();
+}
 
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.style.opacity = 1; clearTimeout(t._h); t._h = setTimeout(() => t.style.opacity = 0, 1800); }
 
@@ -962,9 +844,35 @@ const secObs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersec
 ['home','about','expertise','lab','insights','contact'].forEach(id => secObs.observe(document.getElementById(id)));
 
 document.getElementById('yr').textContent = new Date().getFullYear();
-loadFromHash();
-update();
-if (location.hash.startsWith('#lab?')) setTimeout(() => document.getElementById('lab').scrollIntoView(), 100);
+/* =====================================================================
+   9. PASSWORD-PROTECTED STRATEGY LAB (AES-GCM, PBKDF2-SHA256)
+   ===================================================================== */
+const LAB_BLOB = "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";
+const LAB_ITER = 250000;
+async function openLab(pw) {
+  const raw = Uint8Array.from(atob(LAB_BLOB), c => c.charCodeAt(0));
+  const salt = raw.slice(0, 16), iv = raw.slice(16, 28), ct = raw.slice(28);
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey({ name:'PBKDF2', salt, iterations:LAB_ITER, hash:'SHA-256' }, base, { name:'AES-GCM', length:256 }, false, ['decrypt']);
+  const data = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name:'AES-GCM', iv }, key, ct)));
+  const lab = document.getElementById('lab');
+  lab.innerHTML = data.html;
+  lab.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  initLab(data.baseline);
+  try { sessionStorage.setItem('kqLab', pw); } catch (e) {}
+}
+document.getElementById('labUnlock').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('labBtn'), err = document.getElementById('labErr');
+  btn.disabled = true; btn.textContent = 'Unlocking…'; err.classList.add('hidden');
+  try { await openLab(document.getElementById('labPw').value); toast('Strategy Lab unlocked'); }
+  catch (x) { err.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'Unlock'; }
+});
+(async () => {
+  let saved = null; try { saved = sessionStorage.getItem('kqLab'); } catch (e) {}
+  if (saved) { try { await openLab(saved); } catch (e) {} }
+  if (location.hash.startsWith('#lab')) setTimeout(() => document.getElementById('lab').scrollIntoView(), 100);
+})();
 </script>
 </body>
 </html>
