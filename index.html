@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kamran Qamar | Automotive Strategy & Transformation</title>
+<meta name="description" content="Automotive strategy, market entry, CKD localisation and business transformation across Europe and Asia. Interactive Strategy Lab with a Malaysia CKD pricing simulator." />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+
+<!-- Tailwind CSS (Play CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+          display: ['Manrope', 'Inter', 'sans-serif'],
+        },
+        colors: {
+          ink: '#0F172A',
+          brand: { 50:'#EFF6FF',100:'#DBEAFE',200:'#BFDBFE',500:'#3B82F6',600:'#2563EB',700:'#1D4ED8',800:'#1E40AF' },
+        },
+        boxShadow: {
+          card: '0 1px 2px rgba(15,23,42,.04), 0 4px 16px -4px rgba(15,23,42,.08)',
+          lift: '0 2px 4px rgba(15,23,42,.05), 0 16px 32px -8px rgba(15,23,42,.14)',
+        },
+      },
+    },
+  };
+</script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<style>
+  body { background:#F8FAFC; color:#0F172A; -webkit-font-smoothing:antialiased; }
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(148,163,184,.12) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148,163,184,.12) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at 70% 30%, #000 30%, transparent 75%);
+  }
+  /* Range sliders */
+  input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:999px;
+    background: linear-gradient(to right,#2563EB 0%,#2563EB var(--p,50%),#E2E8F0 var(--p,50%),#E2E8F0 100%); outline:none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%;
+    background:#fff; border:2px solid #2563EB; box-shadow:0 1px 4px rgba(37,99,235,.35); cursor:pointer; transition:transform .15s; }
+  input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.15); }
+  input[type=range]::-moz-range-thumb { width:16px; height:16px; border-radius:50%; background:#fff; border:2px solid #2563EB; cursor:pointer; }
+  input[type=range]:focus-visible { box-shadow:0 0 0 3px rgba(37,99,235,.25); }
+  .num { font-variant-numeric: tabular-nums; }
+  .tab-active { background:#fff; color:#1D4ED8; box-shadow:0 1px 3px rgba(15,23,42,.1); }
+  .arc { stroke-dasharray:6 8; animation: dash 2.4s linear infinite; }
+  @keyframes dash { to { stroke-dashoffset:-56; } }
+  .pulse { animation: pulse 2.4s ease-out infinite; transform-origin:center; transform-box:fill-box; }
+  @keyframes pulse { 0%{opacity:.6; transform:scale(1);} 100%{opacity:0; transform:scale(3);} }
+  .reveal { opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce) { .arc,.pulse{animation:none} .reveal{opacity:1;transform:none} }
+  details > summary { list-style:none; } details > summary::-webkit-details-marker { display:none; }
+  details[open] .chev { transform:rotate(180deg); }
+</style>
+</head>
+
+<body class="font-sans">
+
+<!-- ============ NAVIGATION ============ -->
+<header id="top" class="sticky top-0 z-50 border-b border-slate-200/80 bg-white/85 backdrop-blur-md">
+  <nav class="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 lg:px-8">
+    <a href="#home" class="flex items-center gap-3">
+      <span class="grid h-9 w-9 place-items-center rounded-lg bg-ink font-display text-sm font-bold text-white">KQ</span>
+      <span class="leading-tight">
+        <span class="block font-display text-[15px] font-bold tracking-wide text-ink">KAMRAN QAMAR</span>
+        <span class="hidden text-xs text-slate-500 sm:block">Automotive Strategy &amp; Transformation</span>
+      </span>
+    </a>
+    <ul class="hidden items-center gap-1 text-sm font-medium text-slate-600 md:flex" id="navlinks">
+      <li><a href="#home" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-ink">Home</a></li>
+      <li><a href="#about" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-ink">About</a></li>
+      <li><a href="#expertise" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-ink">Expertise</a></li>
+      <li><a href="#lab" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-ink">Strategy Lab</a></li>
+      <li><a href="#insights" class="rounded-md px-3 py-2 hover:bg-slate-100 hover:text-ink">Insights</a></li>
+      <li><a href="#contact" class="ml-2 rounded-md bg-brand-600 px-4 py-2 text-white shadow-sm hover:bg-brand-700">Contact</a></li>
+    </ul>
+    <button id="menuBtn" class="rounded-md p-2 text-slate-700 hover:bg-slate-100 md:hidden" aria-label="Open menu" aria-expanded="false">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </nav>
+  <div id="mobileMenu" class="hidden border-t border-slate-200 bg-white px-5 py-3 md:hidden">
+    <a href="#home" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100">Home</a>
+    <a href="#about" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100">About</a>
+    <a href="#expertise" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100">Expertise</a>
+    <a href="#lab" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100">Strategy Lab</a>
+    <a href="#insights" class="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-100">Insights</a>
+    <a href="#contact" class="block rounded-md px-3 py-2 font-medium text-brand-700 hover:bg-brand-50">Contact</a>
+  </div>
+</header>
+
+<main>
+<!-- ============ HERO ============ -->
+<section id="home" class="relative overflow-hidden bg-white">
+  <div class="grid-bg pointer-events-none absolute inset-0"></div>
+  <div class="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-brand-100/60 blur-3xl"></div>
+
+  <div class="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-14 lg:grid-cols-12 lg:px-8 lg:pb-24 lg:pt-20">
+    <div class="lg:col-span-6 reveal">
+      <p class="mb-5 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-semibold uppercase tracking-[.14em] text-brand-700">
+        <span class="h-1.5 w-1.5 rounded-full bg-brand-600"></span> Automotive Strategy · Europe × Asia
+      </p>
+      <h1 class="font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-ink sm:text-5xl lg:text-[56px]">
+        Connecting Markets.<br/>
+        <span class="bg-gradient-to-r from-brand-700 to-brand-500 bg-clip-text text-transparent">Transforming Automotive Business.</span>
+      </h1>
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
+        Strategy, market entry, partnerships and business transformation for the global automotive industry, from concept to commercial impact.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="#expertise" class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700">
+          Explore My Expertise
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="#lab" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-ink transition hover:border-slate-400 hover:bg-slate-50">
+          Open Strategy Lab
+        </a>
+        <a href="#about" class="inline-flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold text-slate-600 hover:text-ink">About Me</a>
+      </div>
+      <dl class="mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-slate-200 pt-6">
+        <div><dt class="text-xs text-slate-500">Experience</dt><dd class="font-display text-2xl font-bold text-ink">20+ yrs</dd></div>
+        <div><dt class="text-xs text-slate-500">Focus regions</dt><dd class="font-display text-2xl font-bold text-ink">EU × ASEAN</dd></div>
+        <div><dt class="text-xs text-slate-500">Approach</dt><dd class="font-display text-2xl font-bold text-ink">Data-led</dd></div>
+      </dl>
+    </div>
+
+    <!-- Hero visual: Europe × Asia corridor -->
+    <div class="lg:col-span-6 reveal">
+      <div class="relative rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-lift">
+        <div class="mb-3 flex items-center justify-between">
+          <p class="text-xs font-semibold uppercase tracking-[.14em] text-slate-500">Value-chain corridor</p>
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>Live model</span>
+        </div>
+        <svg viewBox="0 0 560 300" class="w-full" role="img" aria-label="Stylised map connecting Europe, China and Malaysia">
+          <defs>
+            <pattern id="dots" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.3" fill="#CBD5E1"/></pattern>
+            <linearGradient id="arcg" x1="0" x2="1"><stop offset="0" stop-color="#2563EB"/><stop offset="1" stop-color="#60A5FA"/></linearGradient>
+          </defs>
+          <!-- abstract continents -->
+          <path d="M60 70 C 90 40, 170 35, 205 60 C 230 80, 215 115, 190 130 C 165 150, 120 150, 95 135 C 70 120, 45 100, 60 70 Z" fill="url(#dots)"/>
+          <path d="M150 150 C 175 145, 205 160, 210 195 C 214 230, 190 265, 168 270 C 150 250, 140 215, 145 185 Z" fill="url(#dots)"/>
+          <path d="M215 55 C 280 25, 420 25, 490 60 C 525 80, 515 125, 480 140 C 440 158, 400 150, 380 170 C 350 190, 300 175, 270 150 C 240 130, 215 100, 215 55 Z" fill="url(#dots)"/>
+          <path d="M395 190 C 420 185, 450 195, 460 215 C 468 232, 445 240, 425 232 C 405 224, 388 205, 395 190 Z" fill="url(#dots)"/>
+          <path d="M440 250 C 470 240, 515 248, 525 268 C 530 285, 495 292, 465 285 C 445 280, 430 262, 440 250 Z" fill="url(#dots)"/>
+          <!-- arcs -->
+          <path d="M150 95 Q 290 -10 430 105" fill="none" stroke="url(#arcg)" stroke-width="2.2" class="arc"/>
+          <path d="M150 95 Q 300 70 418 210" fill="none" stroke="url(#arcg)" stroke-width="2.2" class="arc"/>
+          <path d="M430 105 Q 445 160 418 210" fill="none" stroke="#94A3B8" stroke-width="1.6" stroke-dasharray="3 5"/>
+          <!-- nodes -->
+          <g><circle cx="150" cy="95" r="6" fill="#2563EB" class="pulse"/><circle cx="150" cy="95" r="6" fill="#2563EB" stroke="#fff" stroke-width="2"/></g>
+          <g><circle cx="430" cy="105" r="6" fill="#2563EB" class="pulse"/><circle cx="430" cy="105" r="6" fill="#2563EB" stroke="#fff" stroke-width="2"/></g>
+          <g><circle cx="418" cy="210" r="6" fill="#0F172A" class="pulse"/><circle cx="418" cy="210" r="6" fill="#0F172A" stroke="#fff" stroke-width="2"/></g>
+          <g font-family="Inter" font-size="12" font-weight="600" fill="#0F172A">
+            <rect x="104" y="108" width="92" height="24" rx="6" fill="#fff" stroke="#E2E8F0"/><text x="150" y="124" text-anchor="middle">Europe</text>
+            <rect x="388" y="70" width="84" height="24" rx="6" fill="#fff" stroke="#E2E8F0"/><text x="430" y="86" text-anchor="middle">China</text>
+            <rect x="352" y="222" width="132" height="24" rx="6" fill="#fff" stroke="#E2E8F0"/><text x="418" y="238" text-anchor="middle">Malaysia · ASEAN</text>
+          </g>
+        </svg>
+        <div class="mt-3 grid grid-cols-3 gap-3">
+          <div class="rounded-xl border border-slate-200 bg-white p-3">
+            <p class="text-[11px] text-slate-500">CKD retail (model)</p>
+            <p class="num font-display text-lg font-bold text-ink" id="heroRetail">–</p>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-white p-3">
+            <p class="text-[11px] text-slate-500">Max kit price</p>
+            <p class="num font-display text-lg font-bold text-ink" id="heroMaxKit">–</p>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-white p-3">
+            <p class="text-[11px] text-slate-500">Excise reduction</p>
+            <p class="num font-display text-lg font-bold text-ink" id="heroExcise">–</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUICK CARDS ============ -->
+<section class="relative z-10 mx-auto -mt-6 max-w-7xl px-5 lg:px-8">
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <a href="#about" class="group reveal rounded-2xl border border-slate-200 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift">
+      <div class="flex items-start justify-between">
+        <span class="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-brand-700">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path stroke-linecap="round" d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+        </span>
+        <svg class="h-5 w-5 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <h3 class="mt-4 font-display text-lg font-bold text-ink">About Me</h3>
+      <p class="mt-1 text-sm text-slate-600">Background, experience and perspective.</p>
+    </a>
+    <a href="#expertise" class="group reveal rounded-2xl border border-slate-200 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift">
+      <div class="flex items-start justify-between">
+        <span class="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-brand-700">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+        </span>
+        <svg class="h-5 w-5 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <h3 class="mt-4 font-display text-lg font-bold text-ink">Expertise</h3>
+      <p class="mt-1 text-sm text-slate-600">Strategy, market entry, CKD / localisation and transformation.</p>
+    </a>
+    <a href="#insights" class="group reveal rounded-2xl border border-slate-200 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift">
+      <div class="flex items-start justify-between">
+        <span class="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 text-brand-700">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        </span>
+        <svg class="h-5 w-5 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <h3 class="mt-4 font-display text-lg font-bold text-ink">Market Intelligence</h3>
+      <p class="mt-1 text-sm text-slate-600">Trends and insights from Europe and Asia.</p>
+    </a>
+    <a href="#lab" class="group reveal rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-600 to-brand-800 p-5 text-white shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+      <div class="flex items-start justify-between">
+        <span class="grid h-11 w-11 place-items-center rounded-xl bg-white/15 text-white">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linejoin="round" d="M12 3l9 5-9 5-9-5 9-5z"/><path stroke-linejoin="round" d="M3 13l9 5 9-5"/></svg>
+        </span>
+        <svg class="h-5 w-5 text-white/60 transition group-hover:translate-x-0.5 group-hover:text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <h3 class="mt-4 font-display text-lg font-bold">Strategy Lab</h3>
+      <p class="mt-1 text-sm text-brand-100">Interactive simulations for pricing, localisation and business cases.</p>
+    </a>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" class="mx-auto max-w-7xl scroll-mt-20 px-5 py-20 lg:px-8 lg:py-28">
+  <div class="grid gap-12 lg:grid-cols-12">
+    <div class="lg:col-span-5 reveal">
+      <p class="text-xs font-semibold uppercase tracking-[.16em] text-brand-700">About</p>
+      <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">Bridging European engineering and Asian growth markets.</h2>
+      <div class="mt-8 flex flex-wrap gap-2">
+        <span class="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700">Market Entry</span>
+        <span class="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700">CKD &amp; Localisation</span>
+        <span class="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700">Pricing &amp; Business Cases</span>
+        <span class="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700">Partnerships &amp; JVs</span>
+        <span class="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700">Electrification</span>
+      </div>
+    </div>
+    <div class="space-y-5 text-[17px] leading-relaxed text-slate-600 lg:col-span-7 reveal">
+      <!-- EDIT: replace with your own biography -->
+      <p>I work at the intersection of strategy and execution in the global automotive industry, helping manufacturers, importers and partners turn market opportunities into profitable, scalable business.</p>
+      <p>My work spans market-entry strategy, CKD assembly and localisation programmes, pricing architecture and partner ecosystems, with a particular focus on the corridor between Europe, China and Southeast Asia.</p>
+      <p>I combine a practical, numbers-first approach with an intercultural perspective: every recommendation is grounded in a business case that decision-makers can test, challenge and act on.</p>
+      <div class="grid gap-4 pt-4 sm:grid-cols-3">
+        <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-card"><p class="font-display text-2xl font-bold text-ink">Market</p><p class="text-sm text-slate-500">Where to play and why</p></div>
+        <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-card"><p class="font-display text-2xl font-bold text-ink">Product</p><p class="text-sm text-slate-500">What to offer, at what price</p></div>
+        <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-card"><p class="font-display text-2xl font-bold text-ink">Profitability</p><p class="text-sm text-slate-500">How it pays back</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPERTISE ============ -->
+<section id="expertise" class="scroll-mt-20 border-y border-slate-200 bg-white py-20 lg:py-28">
+  <div class="mx-auto max-w-7xl px-5 lg:px-8">
+    <div class="max-w-2xl reveal">
+      <p class="text-xs font-semibold uppercase tracking-[.16em] text-brand-700">Expertise</p>
+      <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">From strategy to execution.</h2>
+      <p class="mt-4 text-lg text-slate-600">Six capability areas, one integrated view of market, product and profitability.</p>
+    </div>
+    <div class="mt-12 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- card template repeated -->
+      <article class="bg-white p-7 transition hover:bg-slate-50 reveal">
+        <p class="font-display text-sm font-bold text-brand-600">01</p>
+        <h3 class="mt-3 font-display text-xl font-bold text-ink">Automotive Strategy</h3>
+        <p class="mt-2 text-slate-600">Portfolio, positioning and growth strategy for OEMs, importers and suppliers.</p>
+      </article>
+      <article class="bg-white p-7 transition hover:bg-slate-50 reveal">
+        <p class="font-display text-sm font-bold text-brand-600">02</p>
+        <h3 class="mt-3 font-display text-xl font-bold text-ink">Market Entry</h3>
+        <p class="mt-2 text-slate-600">Entry models, partner selection and go-to-market roadmaps for new regions.</p>
+      </article>
+      <article class="bg-white p-7 transition hover:bg-slate-50 reveal">
+        <p class="font-display text-sm font-bold text-brand-600">03</p>
+        <h3 class="mt-3 font-display text-xl font-bold text-ink">CKD &amp; Localisation</h3>
+        <p class="mt-2 text-slate-600">Kit pricing, local-content strategy, incentives and assembly business cases.</p>
+      </article>
+      <article class="bg-white p-7 transition hover:bg-slate-50 reveal">
+        <p class="font-display text-sm font-bold text-brand-600">04</p>
+        <h3 class="mt-3 font-display text-xl font-bold text-ink">Pricing &amp; Profitability</h3>
+        <p class="mt-2 text-slate-600">Price waterfalls, margin architecture and reverse target-costing.</p>
+      </article>
+      <article class="bg-white p-7 transition hover:bg-slate-50 reveal">
+        <p class="font-display text-sm font-bold text-brand-600">05</p>
+        <h3 class="mt-3 font-display text-xl font-bold text-ink">Partnerships &amp; Ecosystems</h3>
+        <p class="mt-2 text-slate-600">Joint ventures, contract assembly and industrial ecosystem development.</p>
+      </article>
+      <article class="bg-white p-7 transition hover:bg-slate-50 reveal">
+        <p class="font-display text-sm font-bold text-brand-600">06</p>
+        <h3 class="mt-3 font-display text-xl font-bold text-ink">Business Transformation</h3>
+        <p class="mt-2 text-slate-600">Electrification, organisational change and programme leadership.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STRATEGY LAB ============ -->
+<section id="lab" class="mx-auto max-w-7xl scroll-mt-20 px-5 py-20 lg:px-8 lg:py-28">
+  <div class="flex flex-wrap items-end justify-between gap-6 reveal">
+    <div class="max-w-2xl">
+      <p class="text-xs font-semibold uppercase tracking-[.16em] text-brand-700">Strategy Lab</p>
+      <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">Malaysia CKD Pricing Simulator</h2>
+      <p class="mt-4 text-lg text-slate-600">Move the sliders to see how kit price, FX, excise relief and channel margins flow through to the retail price, and how much kit-price headroom a target retail price leaves.</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button id="btnReset" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-ink hover:bg-slate-50">Reset to baseline</button>
+      <button id="btnShare" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-ink hover:bg-slate-50">Copy scenario link</button>
+    </div>
+  </div>
+
+  <div class="mt-10 grid gap-6 lg:grid-cols-12">
+    <!-- ---------- INPUTS ---------- -->
+    <aside class="rounded-2xl border border-slate-200 bg-white p-6 shadow-card lg:col-span-4" aria-label="Simulation inputs">
+      <h3 class="font-display text-base font-bold text-ink">Input parameters</h3>
+      <p class="mt-1 text-xs text-slate-500">Baseline values from the 29 Sep 2026 waterfall.</p>
+      <div id="sliders" class="mt-6 space-y-6"></div>
+
+      <details class="mt-6 rounded-xl border border-slate-200 bg-slate-50/60">
+        <summary class="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-semibold text-ink">
+          Cost waterfall (MYR / car)
+          <svg class="chev h-4 w-4 text-slate-500 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div id="costInputs" class="grid grid-cols-2 gap-3 px-4 pb-4"></div>
+      </details>
+
+      <details class="mt-3 rounded-xl border border-amber-200 bg-amber-50/50">
+        <summary class="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-semibold text-ink">
+          Tax model (unvalidated)
+          <svg class="chev h-4 w-4 text-slate-500 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="space-y-3 px-4 pb-4">
+          <div id="taxInputs" class="grid grid-cols-2 gap-3"></div>
+          <label class="flex items-center justify-between gap-3 text-sm text-slate-700">
+            <span>Linear tax sensitivity</span>
+            <input type="checkbox" id="taxLinear" class="h-4 w-4 accent-blue-600" checked />
+          </label>
+          <p class="text-xs leading-relaxed text-amber-800">Excise + sales tax is a combined reference value, scaled linearly with the remaining tax fraction. It's a rough scenario estimate, not a calculation under Malaysian excise or sales-tax law.</p>
+        </div>
+      </details>
+    </aside>
+
+    <!-- ---------- RESULTS ---------- -->
+    <div class="space-y-6 lg:col-span-8">
+      <!-- KPI tiles -->
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+          <p class="text-xs font-medium text-slate-500">Retail price (calculated)</p>
+          <p class="num mt-1 font-display text-3xl font-bold text-ink" id="kRetail">–</p>
+          <p class="num mt-1 text-sm" id="kGap">–</p>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+          <p class="text-xs font-medium text-slate-500">Ex-works / importer price</p>
+          <p class="num mt-1 font-display text-3xl font-bold text-ink" id="kExw">–</p>
+          <p class="num mt-1 text-sm text-slate-500" id="kCif">–</p>
+        </div>
+        <div class="rounded-2xl border border-brand-200 bg-brand-50/60 p-5 shadow-card">
+          <p class="text-xs font-medium text-brand-800">Max kit price at target retail</p>
+          <p class="num mt-1 font-display text-3xl font-bold text-ink" id="kMaxKit">–</p>
+          <p class="num mt-1 text-sm" id="kHeadroom">–</p>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+          <p class="text-xs font-medium text-slate-500">Channel margins / car</p>
+          <p class="num mt-1 font-display text-3xl font-bold text-ink" id="kMargins">–</p>
+          <p class="num mt-1 text-sm text-slate-500" id="kMarginsSplit">–</p>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+          <p class="text-xs font-medium text-slate-500">Excise + sales tax / car</p>
+          <p class="num mt-1 font-display text-3xl font-bold text-ink" id="kTax">–</p>
+          <p class="num mt-1 text-sm text-slate-500" id="kTaxShare">–</p>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+          <p class="text-xs font-medium text-slate-500">Annual kit value <span class="text-slate-400">(volume ext.)</span></p>
+          <p class="num mt-1 font-display text-3xl font-bold text-ink" id="kAnnual">–</p>
+          <p class="num mt-1 text-sm text-slate-500" id="kAnnualEur">–</p>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h3 class="font-display text-base font-bold text-ink" id="chartTitle">Price waterfall</h3>
+          <div class="inline-flex rounded-lg bg-slate-100 p-1 text-sm font-medium text-slate-600" role="tablist">
+            <button class="tab rounded-md px-3 py-1.5 tab-active" data-tab="waterfall" role="tab">Waterfall</button>
+            <button class="tab rounded-md px-3 py-1.5" data-tab="excise" role="tab">Excise sensitivity</button>
+            <button class="tab rounded-md px-3 py-1.5" data-tab="kit" role="tab">Kit sensitivity</button>
+            <button class="tab rounded-md px-3 py-1.5" data-tab="table" role="tab">Calculation</button>
+          </div>
+        </div>
+        <p class="mt-1 text-sm text-slate-500" id="chartSub">How each cost and margin builds up to the retail price (MYR per car).</p>
+        <div class="relative mt-5 h-[340px]" id="chartWrap"><canvas id="chart"></canvas></div>
+        <div id="tableWrap" class="mt-5 hidden overflow-x-auto"></div>
+      </div>
+
+      <!-- Scenario compare -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="font-display text-base font-bold text-ink">Scenario comparison</h3>
+            <p class="text-sm text-slate-500">Store the current inputs as A or B and compare them side by side.</p>
+          </div>
+          <div class="flex gap-2">
+            <button class="saveScn rounded-lg bg-ink px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800" data-s="A">Save as A</button>
+            <button class="saveScn rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white hover:bg-brand-700" data-s="B">Save as B</button>
+          </div>
+        </div>
+        <div id="scnTable" class="mt-4 overflow-x-auto text-sm"></div>
+      </div>
+
+      <details class="rounded-2xl border border-slate-200 bg-white shadow-card">
+        <summary class="flex cursor-pointer items-center justify-between px-6 py-4 text-sm font-semibold text-ink">
+          Methodology &amp; model notes
+          <svg class="chev h-4 w-4 text-slate-500 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <dl class="grid gap-x-6 gap-y-4 px-6 pb-6 text-sm sm:grid-cols-[160px_1fr]">
+          <dt class="font-semibold text-ink">Forward calc</dt><dd class="text-slate-600">CIF = FX × kit price. Ex-works / importer price = CIF + import duty + localisation + assembly + transport + other ex-works + VGM fixed + tax. Distributor margin = ex-works × m<sub>d</sub>/(1−m<sub>d</sub>). Dealer margin = (ex-works + warranty + other + distributor margin) × m<sub>r</sub>/(1−m<sub>r</sub>). Retail = sum of all.</dd>
+          <dt class="font-semibold text-ink">Reverse calc</dt><dd class="text-slate-600">Max ex-works = (target × (1−m<sub>r</sub>) − warranty − other) × (1−m<sub>d</sub>). Max CIF = max ex-works − local costs and tax. Max kit price = max CIF ÷ FX.</dd>
+          <dt class="font-semibold text-ink">Tax</dt><dd class="text-slate-600">Tax = reference tax × (1 − reduction) ÷ (1 − reference reduction). This is an approximation for scenarios only and has not been checked against Malaysian excise or sales-tax law.</dd>
+          <dt class="font-semibold text-ink">Margins</dt><dd class="text-slate-600">Distributor and dealer margins are treated as gross margin on their own selling price. The original may use fixed amounts or a different margin base.</dd>
+          <dt class="font-semibold text-ink">Volume</dt><dd class="text-slate-600">Annual volume isn't in the source workbook. It only drives the annual kit value (kit price × volume).</dd>
+          <dt class="font-semibold text-ink">Validate before use</dt><dd class="text-slate-600">Confirm the taxable OMV base, how the ED/ST reduction is applied, assembly cost scope, the 6% importer margin base, the 5% dealer margin base, and whether VAT/SST applies.</dd>
+        </dl>
+      </details>
+      <p class="text-xs text-slate-400">Simplified demonstration model for illustration. Not a validated Malaysian tax or CKD business-case calculation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INSIGHTS ============ -->
+<section id="insights" class="scroll-mt-20 border-y border-slate-200 bg-white py-20 lg:py-28">
+  <div class="mx-auto max-w-7xl px-5 lg:px-8">
+    <div class="flex flex-wrap items-end justify-between gap-6 reveal">
+      <div class="max-w-2xl">
+        <p class="text-xs font-semibold uppercase tracking-[.16em] text-brand-700">Insights</p>
+        <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">Thought leadership &amp; market analysis</h2>
+      </div>
+      <a href="#contact" class="text-sm font-semibold text-brand-700 hover:text-brand-800">Request a briefing →</a>
+    </div>
+    <!-- EDIT: replace the cards below with your own articles. Set href to the article URL / PDF. -->
+    <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3" id="insightGrid"></div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact" class="mx-auto max-w-7xl scroll-mt-20 px-5 py-20 lg:px-8 lg:py-28">
+  <div class="grid overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lift lg:grid-cols-2">
+    <div class="relative bg-ink p-10 text-white lg:p-12">
+      <div class="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-brand-600/30 blur-3xl"></div>
+      <p class="text-xs font-semibold uppercase tracking-[.16em] text-brand-200">Contact</p>
+      <h2 class="mt-3 font-display text-3xl font-bold tracking-tight">Let's talk about your next market move.</h2>
+      <p class="mt-4 text-slate-300">Speaking engagements, university lectures, advisory mandates or a walkthrough of the Strategy Lab. I'm happy to connect.</p>
+      <ul class="mt-8 space-y-4 text-sm">
+        <!-- EDIT: replace with your real details -->
+        <li class="flex items-center gap-3"><span class="grid h-9 w-9 place-items-center rounded-lg bg-white/10">✉</span><a id="mailLink" href="mailto:hello@example.com" class="hover:text-brand-200">hello@example.com</a></li>
+        <li class="flex items-center gap-3"><span class="grid h-9 w-9 place-items-center rounded-lg bg-white/10 text-xs font-bold">in</span><a href="https://www.linkedin.com/" target="_blank" rel="noopener" class="hover:text-brand-200">linkedin.com/in/your-profile</a></li>
+        <li class="flex items-center gap-3"><span class="grid h-9 w-9 place-items-center rounded-lg bg-white/10">⌖</span><span>Europe · Asia</span></li>
+      </ul>
+    </div>
+    <form id="contactForm" class="space-y-4 p-10 lg:p-12">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="block text-sm font-medium text-slate-700">Name<input required name="name" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100" /></label>
+        <label class="block text-sm font-medium text-slate-700">Organisation<input name="org" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100" /></label>
+      </div>
+      <label class="block text-sm font-medium text-slate-700">Topic
+        <select name="topic" class="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100">
+          <option>Advisory / consulting</option><option>Speaking / university lecture</option><option>Strategy Lab walkthrough</option><option>Other</option>
+        </select>
+      </label>
+      <label class="block text-sm font-medium text-slate-700">Message<textarea required name="msg" rows="5" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"></textarea></label>
+      <button class="w-full rounded-lg bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">Send message</button>
+      <p class="text-xs text-slate-400">Opens your email app with the message pre-filled.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="border-t border-slate-200 bg-white">
+  <div class="mx-auto grid max-w-7xl gap-6 px-5 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
+    <div class="flex gap-3"><span class="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-50 font-display font-bold text-brand-700">20+</span><div><p class="font-semibold text-ink">Years of experience</p><p class="text-sm text-slate-500">Automotive industry</p></div></div>
+    <div class="flex gap-3"><span class="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-700"><svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></span><div><p class="font-semibold text-ink">Europe × Asia</p><p class="text-sm text-slate-500">Intercultural business perspective</p></div></div>
+    <div class="flex gap-3"><span class="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-700"><svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linejoin="round" d="M12 3l9 5-9 5-9-5 9-5z"/><path stroke-linejoin="round" d="M3 13l9 5 9-5"/></svg></span><div><p class="font-semibold text-ink">Strategy → Execution</p><p class="text-sm text-slate-500">From concept to business impact</p></div></div>
+    <div class="flex gap-3"><span class="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-700"><svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span><div><p class="font-semibold text-ink">Market · Product · Profitability</p><p class="text-sm text-slate-500">Holistic, practice-oriented approach</p></div></div>
+  </div>
+  <div class="border-t border-slate-200">
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-6 text-sm text-slate-500 lg:px-8">
+      <p>© <span id="yr"></span> Kamran Qamar · Automotive Strategy &amp; Transformation</p>
+      <nav class="flex flex-wrap gap-5">
+        <a href="#about" class="hover:text-ink">About</a><a href="#expertise" class="hover:text-ink">Expertise</a><a href="#lab" class="hover:text-ink">Strategy Lab</a><a href="#insights" class="hover:text-ink">Insights</a><a href="#contact" class="hover:text-ink">Contact</a>
+        <a href="#top" class="font-medium text-brand-700 hover:text-brand-800">Back to top ↑</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<div id="toast" class="pointer-events-none fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-lg bg-ink px-4 py-2.5 text-sm font-medium text-white opacity-0 shadow-lift transition">Copied</div>
+
+<script>
+/* =====================================================================
+   1. MODEL: exact replication of "Malaysia_CKD_Simulator_Updated.xlsx"
+   ===================================================================== */
+const BASELINE = {
+  fx: 4.6767,          // B5  FX EUR→MYR
+  kit: 12471,          // B6  CKD kit / CIF landed (EUR/car)
+  target: 113644,      // B7  Target retail price (MYR/car)
+  excise: 0.85,        // B8  Excise duty reduction
+  distM: 0.06,         // B9  Distributor margin
+  dealerM: 0.05,       // B10 Dealer margin
+  assembly: 1468,      // B11
+  localisation: 2427,  // B12
+  importDuty: 158,     // B13
+  transport: 615,      // B14
+  otherExw: 53,        // B15
+  vgm: 408,            // B16 VGM fixed costs
+  warranty: 641,       // B17 Warranty (3 yrs)
+  otherCosts: 568,     // B18
+  taxRef: 2274,        // B19 Excise/sales tax at reference reduction
+  taxRefRed: 0.85,     // B20 Reference reduction
+  taxLinear: 1,        // B21 1 = linear
+  volume: 5000,        // web extension (not in workbook): annual units
+};
+
+function compute(p) {
+  const cif   = p.fx * p.kit;                                              // B24
+  const tax   = p.taxLinear === 1
+      ? (p.taxRefRed >= 1 ? 0 : p.taxRef * (1 - p.excise) / (1 - p.taxRefRed)) // B31
+      : p.taxRef;
+  const localAndTax = p.importDuty + p.localisation + p.assembly + p.transport + p.otherExw + p.vgm + tax; // SUM(B25:B31)
+  const exw    = cif + localAndTax;                                        // B32
+  const dist   = exw * p.distM / (1 - p.distM);                            // B35
+  const dealer = (exw + p.warranty + p.otherCosts + dist) * p.dealerM / (1 - p.dealerM); // B36
+  const retail = exw + p.warranty + p.otherCosts + dist + dealer;          // B37
+  const gap    = retail - p.target;                                        // B38
+  // Reverse
+  const maxExw  = (p.target * (1 - p.dealerM) - p.warranty - p.otherCosts) * (1 - p.distM); // B42
+  const maxCif  = maxExw - localAndTax;                                    // B43
+  const maxKit  = maxCif / p.fx;                                           // B44
+  const headroom = maxKit - p.kit;                                         // B45
+  return { cif, tax, localAndTax, exw, dist, dealer, retail, gap, maxExw, maxCif, maxKit, headroom,
+           annualMYR: cif * p.volume, annualEUR: p.kit * p.volume, annualRetail: retail * p.volume };
+}
+
+/* =====================================================================
+   2. STATE + INPUT DEFINITIONS
+   ===================================================================== */
+let S = { ...BASELINE };
+
+const SLIDERS = [
+  { k:'kit',     label:'CKD kit price (CIF landed)', unit:'EUR', min:6000,  max:25000,  step:50,   fmt:v=>'€ '+fmtInt(v) },
+  { k:'fx',      label:'FX rate EUR → MYR',          unit:'',    min:4.0,   max:5.5,    step:0.0001, fmt:v=>v.toFixed(4) },
+  { k:'target',  label:'Target retail price',        unit:'MYR', min:60000, max:200000, step:500,  fmt:v=>'RM '+fmtInt(v) },
+  { k:'excise',  label:'Excise duty reduction',      unit:'%',   min:0,     max:1,      step:0.01, fmt:v=>Math.round(v*100)+' %', pct:true },
+  { k:'distM',   label:'Distributor margin',         unit:'%',   min:0,     max:0.20,   step:0.005,fmt:v=>(v*100).toFixed(1)+' %', pct:true },
+  { k:'dealerM', label:'Dealer margin',              unit:'%',   min:0,     max:0.20,   step:0.005,fmt:v=>(v*100).toFixed(1)+' %', pct:true },
+  { k:'volume',  label:'Annual volume (units)',      unit:'',    min:500,   max:30000,  step:100,  fmt:v=>fmtInt(v) },
+];
+const COSTS = [
+  ['importDuty','Import duty'],['localisation','Localisation fee'],['assembly','Assembly costs'],['transport','Transport'],
+  ['otherExw','Other ex-works'],['vgm','VGM fixed costs'],['warranty','Warranty (3 yrs)'],['otherCosts','Other costs'],
+];
+const TAXES = [['taxRef','Tax at ref. (MYR)',1],['taxRefRed','Ref. reduction (%)',100]];
+
+/* =====================================================================
+   3. FORMATTING
+   ===================================================================== */
+const fmtInt = v => Math.round(v).toLocaleString('en-US');
+const rm  = v => (v < 0 ? '−' : '') + 'RM ' + fmtInt(Math.abs(v));
+const eur = v => (v < 0 ? '−' : '') + '€ ' + fmtInt(Math.abs(v));
+const rmCompact = v => Math.abs(v) >= 1e9 ? 'RM ' + (v/1e9).toFixed(2) + ' bn' : 'RM ' + (v/1e6).toFixed(1) + ' m';
+const eurCompact = v => Math.abs(v) >= 1e9 ? '€ ' + (v/1e9).toFixed(2) + ' bn' : '€ ' + (v/1e6).toFixed(1) + ' m';
+const signed = (v, f) => (v > 0 ? '+' : v < 0 ? '−' : '±') + f(Math.abs(v)).replace('−','');
+
+/* =====================================================================
+   4. BUILD INPUT UI
+   ===================================================================== */
+const sliderBox = document.getElementById('sliders');
+SLIDERS.forEach(d => {
+  const el = document.createElement('div');
+  el.innerHTML = `
+    <div class="flex items-center justify-between gap-3">
+      <label for="r_${d.k}" class="text-sm font-medium text-slate-700">${d.label}</label>
+      <input id="n_${d.k}" type="number" step="any" class="num w-28 rounded-md border border-slate-300 px-2 py-1 text-right text-sm font-semibold text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100" aria-label="${d.label} value${d.pct?' in percent':''}" />
+    </div>
+    <input id="r_${d.k}" type="range" min="${d.min}" max="${d.max}" step="${d.step}" class="mt-3" />
+    <div class="mt-1 flex justify-between text-[11px] text-slate-400"><span>${d.fmt(d.min)}</span><span>${d.fmt(d.max)}</span></div>`;
+  sliderBox.appendChild(el);
+  const r = el.querySelector('input[type=range]'), n = el.querySelector('input[type=number]');
+  r.addEventListener('input', () => { S[d.k] = parseFloat(r.value); update(); });
+  n.addEventListener('change', () => {
+    let v = parseFloat(n.value); if (isNaN(v)) return syncInputs();
+    if (d.pct) v = v / 100;
+    S[d.k] = v; update();
+  });
+});
+function numField(container, key, label, scale) {
+  const w = document.createElement('label');
+  w.className = 'block text-xs font-medium text-slate-600';
+  w.innerHTML = `${label}<input data-k="${key}" data-scale="${scale||1}" type="number" step="any" class="num mt-1 w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-right text-sm font-semibold text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100" />`;
+  container.appendChild(w);
+  const i = w.querySelector('input');
+  i.addEventListener('input', () => { const v = parseFloat(i.value); if (!isNaN(v)) { S[key] = v / (scale||1); update(true); } });
+}
+COSTS.forEach(([k,l]) => numField(document.getElementById('costInputs'), k, l));
+TAXES.forEach(([k,l,s]) => numField(document.getElementById('taxInputs'), k, l, s));
+document.getElementById('taxLinear').addEventListener('change', e => { S.taxLinear = e.target.checked ? 1 : 0; update(); });
+
+function syncInputs(skipNumFields) {
+  SLIDERS.forEach(d => {
+    const r = document.getElementById('r_'+d.k), n = document.getElementById('n_'+d.k);
+    r.value = S[d.k];
+    const pct = (Math.min(Math.max(S[d.k], d.min), d.max) - d.min) / (d.max - d.min) * 100;
+    r.style.setProperty('--p', pct + '%');
+    if (document.activeElement !== n) n.value = d.pct ? +(S[d.k]*100).toFixed(2) : (d.k==='fx' ? S[d.k].toFixed(4) : Math.round(S[d.k]));
+  });
+  if (!skipNumFields) document.querySelectorAll('[data-k]').forEach(i => {
+    if (document.activeElement !== i) i.value = +(S[i.dataset.k] * (+i.dataset.scale)).toFixed(4);
+  });
+  document.getElementById('taxLinear').checked = S.taxLinear === 1;
+}
+
+/* =====================================================================
+   5. CHARTS
+   ===================================================================== */
+const C = { blue:'#2563EB', blueLight:'#93C5FD', ink:'#0F172A', slate:'#64748B', grid:'#EEF2F7', amber:'#D97706', pos:'#047857', neg:'#B91C1C' };
+let chart, activeTab = 'waterfall';
+if (window.Chart) {
+  Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+  Chart.defaults.font.size = 12;
+  Chart.defaults.color = C.slate;
+}
+const tooltipBase = { backgroundColor:'#0F172A', padding:10, cornerRadius:8, titleFont:{weight:'600'}, displayColors:false };
+
+function waterfallData(r) {
+  const steps = [
+    ['CIF landed', r.cif], ['Import duty', S.importDuty], ['Localisation', S.localisation], ['Assembly', S.assembly],
+    ['Transport', S.transport], ['Other ex-works', S.otherExw], ['VGM fixed', S.vgm], ['Excise + SST', r.tax],
+  ];
+  const labels = [], data = [], colors = [];
+  let run = 0;
+  steps.forEach(([l,v]) => { labels.push(l); data.push([run, run + v]); colors.push(l==='CIF landed'?C.blue:l==='Excise + SST'?C.amber:C.blueLight); run += v; });
+  labels.push('Ex-works'); data.push([0, r.exw]); colors.push(C.ink);
+  [['Warranty', S.warranty], ['Other costs', S.otherCosts], ['Distributor', r.dist], ['Dealer', r.dealer]].forEach(([l,v]) => {
+    labels.push(l); data.push([run, run + v]); colors.push(l==='Distributor'||l==='Dealer'?'#60A5FA':C.blueLight); run += v;
+  });
+  labels.push('Retail'); data.push([0, r.retail]); colors.push(C.ink);
+  return { labels, data, colors };
+}
+
+function seriesOver(key, xs) {
+  return xs.map(x => compute({ ...S, [key]: x }));
+}
+
+function renderChart(r) {
+  const wrap = document.getElementById('chartWrap'), tbl = document.getElementById('tableWrap');
+  const title = document.getElementById('chartTitle'), sub = document.getElementById('chartSub');
+  if (activeTab === 'table') { wrap.classList.add('hidden'); tbl.classList.remove('hidden'); renderTable(r);
+    title.textContent = 'Calculation detail'; sub.textContent = 'Forward and reverse calculation, line by line, as in the source workbook.'; return; }
+  wrap.classList.remove('hidden'); tbl.classList.add('hidden');
+  if (!window.Chart) { wrap.innerHTML = '<p class="p-6 text-sm text-slate-500">Chart library could not load. Check your internet connection.</p>'; return; }
+
+  let cfg;
+  const yMoney = { grid:{ color:C.grid, drawTicks:false }, border:{ display:false }, ticks:{ padding:8, callback:v => (v/1000).toFixed(0)+'k' } };
+  const xCat = { grid:{ display:false }, border:{ color:'#CBD5E1' } };
+
+  if (activeTab === 'waterfall') {
+    title.textContent = 'Price waterfall';
+    sub.textContent = 'How each cost and margin builds up to the retail price (MYR per car). Dark bars are subtotals.';
+    const w = waterfallData(r);
+    cfg = { type:'bar',
+      data:{ labels:w.labels, datasets:[{ data:w.data, backgroundColor:w.colors, borderRadius:4, borderSkipped:false, barPercentage:.78, categoryPercentage:.9 }] },
+      options:{ responsive:true, maintainAspectRatio:false, animation:{ duration:250 },
+        plugins:{ legend:{ display:false }, tooltip:{ ...tooltipBase, callbacks:{ label:c => { const [a,b]=c.raw; return rm(b-a) + (c.label==='Ex-works'||c.label==='Retail' ? ' (subtotal)' : ''); } } } },
+        scales:{ x:{ ...xCat, ticks:{ maxRotation:45, minRotation:0, autoSkip:false, font:{ size:11 } } }, y:yMoney } } };
+  }
+  else if (activeTab === 'excise') {
+    title.textContent = 'Excise sensitivity';
+    sub.textContent = 'Calculated retail price vs. excise duty reduction, with your target retail price as a reference line (MYR per car).';
+    const xs = []; for (let x = 50; x <= 100; x += 5) xs.push(x);
+    const rs = seriesOver('excise', xs.map(x => x/100));
+    const cur = Math.round(S.excise * 100);
+    cfg = { type:'line',
+      data:{ labels:xs.map(x => x+'%'), datasets:[
+        { label:'Calculated retail', data:rs.map(o => o.retail), borderColor:C.blue, backgroundColor:C.blue, borderWidth:2, tension:.25,
+          pointRadius:xs.map(x => x===cur?6:3), pointBackgroundColor:xs.map(x => x===cur?C.blue:'#fff'), pointBorderColor:C.blue, pointBorderWidth:2, pointHoverRadius:7 },
+        { label:'Target retail', data:xs.map(() => S.target), borderColor:C.slate, borderDash:[6,5], borderWidth:1.5, pointRadius:0, pointHoverRadius:0 } ] },
+      options:{ responsive:true, maintainAspectRatio:false, animation:{ duration:250 }, interaction:{ mode:'index', intersect:false },
+        plugins:{ legend:{ position:'top', align:'end', labels:{ boxWidth:14, boxHeight:2, usePointStyle:false } },
+          tooltip:{ ...tooltipBase, displayColors:true, callbacks:{ title:c => 'Excise reduction ' + c[0].label, label:c => ' ' + c.dataset.label + ': ' + rm(c.raw) } } },
+        scales:{ x:{ ...xCat, title:{ display:true, text:'Excise duty reduction' } }, y:yMoney } } };
+  }
+  else if (activeTab === 'kit') {
+    title.textContent = 'Kit price sensitivity';
+    sub.textContent = 'Calculated retail price as the kit price moves ±30% around the current value. The dashed line is the target retail price (MYR per car).';
+    const xs = []; for (let i = -30; i <= 30; i += 5) xs.push(i);
+    const rs = seriesOver('kit', xs.map(i => S.kit * (1 + i/100)));
+    cfg = { type:'line',
+      data:{ labels:xs.map(i => (i>0?'+':'') + i + '%'), datasets:[
+        { label:'Calculated retail', data:rs.map(o => o.retail), borderColor:C.blue, backgroundColor:C.blue, borderWidth:2, tension:0,
+          pointRadius:xs.map(i => i===0?6:3), pointBackgroundColor:xs.map(i => i===0?C.blue:'#fff'), pointBorderColor:C.blue, pointBorderWidth:2, pointHoverRadius:7 },
+        { label:'Target retail', data:xs.map(() => S.target), borderColor:C.slate, borderDash:[6,5], borderWidth:1.5, pointRadius:0, pointHoverRadius:0 } ] },
+      options:{ responsive:true, maintainAspectRatio:false, animation:{ duration:250 }, interaction:{ mode:'index', intersect:false },
+        plugins:{ legend:{ position:'top', align:'end', labels:{ boxWidth:14, boxHeight:2 } },
+          tooltip:{ ...tooltipBase, displayColors:true, callbacks:{ title:c => { const i = xs[c[0].dataIndex]; return 'Kit ' + eur(S.kit*(1+i/100)) + ' (' + c[0].label + ')'; }, label:c => ' ' + c.dataset.label + ': ' + rm(c.raw) } } },
+        scales:{ x:{ ...xCat, title:{ display:true, text:'Change in kit price vs. current' } }, y:yMoney } } };
+  }
+
+  if (chart && chart.config.type === cfg.type && chart._tab === activeTab) {
+    chart.data = cfg.data; chart.options = cfg.options; chart.update('none');
+  } else {
+    if (chart) chart.destroy();
+    chart = new Chart(document.getElementById('chart'), cfg); chart._tab = activeTab;
+  }
+}
+
+function renderTable(r) {
+  const row = (l, v, cls='') => `<tr class="border-b border-slate-100 ${cls}"><td class="py-2 pr-4">${l}</td><td class="num py-2 text-right">${v}</td></tr>`;
+  const head = t => `<tr><th colspan="2" class="pb-2 pt-5 text-left text-xs font-semibold uppercase tracking-wider text-brand-700">${t}</th></tr>`;
+  document.getElementById('tableWrap').innerHTML = `<table class="w-full text-sm text-slate-700">
+    ${head('Forward calculation · MYR / car')}
+    ${row('CIF landed (FX × kit)', rm(r.cif))}${row('Import duty', rm(S.importDuty))}${row('Localisation fee', rm(S.localisation))}
+    ${row('Assembly costs', rm(S.assembly))}${row('Transport costs', rm(S.transport))}${row('Other ex-works costs', rm(S.otherExw))}
+    ${row('VGM fixed costs', rm(S.vgm))}${row('Excise + sales tax (scenario)', rm(r.tax))}
+    ${row('<b>Ex-works / importer price</b>', '<b>'+rm(r.exw)+'</b>', 'bg-slate-50')}
+    ${row('Warranty', rm(S.warranty))}${row('Other costs', rm(S.otherCosts))}${row('Distributor margin', rm(r.dist))}${row('Dealer margin', rm(r.dealer))}
+    ${row('<b>Retail price (calculated)</b>', '<b>'+rm(r.retail)+'</b>', 'bg-slate-50')}
+    ${row('Retail vs target', `<span class="${r.gap>0?'text-red-700':'text-emerald-700'}">${signed(r.gap, rm)}</span>`)}
+    ${head('Reverse calculation')}
+    ${row('Target retail price', rm(S.target))}${row('Max ex-works / importer price', rm(r.maxExw))}${row('Max CIF landed', rm(r.maxCif))}
+    ${row('<b>Max kit price</b>', '<b>'+eur(r.maxKit)+'</b>', 'bg-brand-50/60')}
+    ${row('Kit headroom vs current', `<span class="${r.headroom<0?'text-red-700':'text-emerald-700'}">${signed(r.headroom, eur)}</span>`)}
+  </table>`;
+}
+
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => { x.classList.remove('tab-active'); x.setAttribute('aria-selected','false'); });
+  b.classList.add('tab-active'); b.setAttribute('aria-selected','true');
+  activeTab = b.dataset.tab; renderChart(compute(S));
+}));
+
+/* =====================================================================
+   6. SCENARIOS
+   ===================================================================== */
+const scn = { A:null, B:null };
+document.querySelectorAll('.saveScn').forEach(b => b.addEventListener('click', () => { scn[b.dataset.s] = { ...S }; renderScenarios(); toast('Saved as scenario ' + b.dataset.s); }));
+function renderScenarios() {
+  const cur = { ...S };
+  const cols = [['Current', cur], ['A', scn.A], ['B', scn.B]].filter(c => c[1]);
+  const res = cols.map(c => compute(c[1]));
+  const rows = [
+    ['Kit price', c => eur(c.kit)], ['FX EUR→MYR', c => c.fx.toFixed(4)], ['Excise reduction', c => Math.round(c.excise*100)+' %'],
+    ['Distributor / dealer margin', c => (c.distM*100).toFixed(1)+' % / '+(c.dealerM*100).toFixed(1)+' %'], ['Target retail', c => rm(c.target)],
+    ['Ex-works / importer price', (c,r) => rm(r.exw)], ['Retail (calculated)', (c,r) => rm(r.retail), true],
+    ['Retail vs target', (c,r) => `<span class="${r.gap>0?'text-red-700':'text-emerald-700'}">${signed(r.gap, rm)}</span>`],
+    ['Max kit price', (c,r) => eur(r.maxKit), true], ['Kit headroom', (c,r) => `<span class="${r.headroom<0?'text-red-700':'text-emerald-700'}">${signed(r.headroom, eur)}</span>`],
+    ['Annual kit value', (c,r) => rmCompact(r.annualMYR)],
+  ];
+  let h = `<table class="w-full min-w-[480px]"><thead><tr class="border-b border-slate-200 text-left text-xs uppercase tracking-wider text-slate-500"><th class="py-2 pr-4 font-semibold">Metric</th>`;
+  cols.forEach(c => h += `<th class="py-2 text-right font-semibold">${c[0]==='Current'?'Current':'Scenario '+c[0]}</th>`);
+  h += '</tr></thead><tbody>';
+  rows.forEach(([l,f,b]) => { h += `<tr class="border-b border-slate-100 ${b?'font-semibold text-ink':'text-slate-700'}"><td class="py-2 pr-4">${l}</td>`;
+    cols.forEach((c,i) => h += `<td class="num py-2 text-right">${f(c[1], res[i])}</td>`); h += '</tr>'; });
+  h += '</tbody></table>';
+  if (!scn.A && !scn.B) h += '<p class="mt-3 text-xs text-slate-400">No scenarios saved yet. Adjust the inputs, then click "Save as A" or "Save as B".</p>';
+  document.getElementById('scnTable').innerHTML = h;
+}
+
+/* =====================================================================
+   7. UPDATE LOOP
+   ===================================================================== */
+let raf;
+function update(skipNumFields) {
+  syncInputs(skipNumFields);
+  cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(() => {
+    const r = compute(S);
+    const set = (id, v) => document.getElementById(id).innerHTML = v;
+    set('kRetail', rm(r.retail));
+    set('kGap', `<span class="${r.gap>0?'text-red-700':'text-emerald-700'} font-medium">${signed(r.gap, rm)}</span> <span class="text-slate-500">vs target ${rm(S.target)}</span>`);
+    set('kExw', rm(r.exw));
+    set('kCif', 'CIF landed ' + rm(r.cif));
+    set('kMaxKit', eur(r.maxKit));
+    set('kHeadroom', `<span class="${r.headroom<0?'text-red-700':'text-emerald-700'} font-medium">${signed(r.headroom, eur)}</span> <span class="text-slate-500">headroom vs ${eur(S.kit)}</span>`);
+    set('kMargins', rm(r.dist + r.dealer));
+    set('kMarginsSplit', `Distributor ${rm(r.dist)} · Dealer ${rm(r.dealer)}`);
+    set('kTax', rm(r.tax));
+    set('kTaxShare', (r.tax / r.retail * 100).toFixed(1) + ' % of retail · ' + Math.round(S.excise*100) + ' % reduction');
+    set('kAnnual', rmCompact(r.annualMYR));
+    set('kAnnualEur', eurCompact(r.annualEUR) + ' · ' + fmtInt(S.volume) + ' units');
+    set('heroRetail', 'RM ' + (r.retail/1000).toFixed(1) + 'k');
+    set('heroMaxKit', '€ ' + (r.maxKit/1000).toFixed(1) + 'k');
+    set('heroExcise', Math.round(S.excise*100) + ' %');
+    renderChart(r);
+    renderScenarios();
+  });
+}
+
+/* =====================================================================
+   8. SHARE LINK / RESET / MISC
+   ===================================================================== */
+function loadFromHash() {
+  if (!location.hash.startsWith('#lab?')) return;
+  new URLSearchParams(location.hash.slice(5)).forEach((v,k) => { if (k in BASELINE && !isNaN(parseFloat(v))) S[k] = parseFloat(v); });
+}
+document.getElementById('btnShare').addEventListener('click', () => {
+  const q = new URLSearchParams();
+  Object.keys(BASELINE).forEach(k => { if (S[k] !== BASELINE[k]) q.set(k, S[k]); });
+  const url = location.origin + location.pathname + '#lab?' + q.toString();
+  const done = () => toast('Scenario link copied');
+  if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, () => prompt('Copy this link:', url));
+  else prompt('Copy this link:', url);
+});
+document.getElementById('btnReset').addEventListener('click', () => { S = { ...BASELINE }; update(); toast('Reset to baseline'); });
+
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.style.opacity = 1; clearTimeout(t._h); t._h = setTimeout(() => t.style.opacity = 0, 1800); }
+
+// Mobile menu
+const mb = document.getElementById('menuBtn'), mm = document.getElementById('mobileMenu');
+mb.addEventListener('click', () => { mm.classList.toggle('hidden'); mb.setAttribute('aria-expanded', !mm.classList.contains('hidden')); });
+mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mm.classList.add('hidden')));
+
+// Contact form → mailto
+document.getElementById('contactForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const to = document.getElementById('mailLink').getAttribute('href').replace('mailto:','');
+  const body = `${f.get('msg')}\n\n— ${f.get('name')}${f.get('org') ? ', ' + f.get('org') : ''}`;
+  location.href = `mailto:${to}?subject=${encodeURIComponent('[Website] ' + f.get('topic'))}&body=${encodeURIComponent(body)}`;
+});
+
+// Insights (EDIT here: title, category, read time, summary, link)
+const INSIGHTS = [
+  { cat:'Market Analysis', time:'8 min', title:'ASEAN EV Market: Opportunities for Global OEMs', text:'Where incentives, infrastructure and consumer demand are converging, and what it means for entry timing.', grad:'from-brand-600 to-sky-400', icon:'⚡' },
+  { cat:'Strategy', time:'10 min', title:'CKD in Malaysia: Cost, Incentives and the Business Case', text:'A structured walkthrough of kit pricing, localisation fees and excise relief, and how they shape retail price.', grad:'from-slate-800 to-slate-500', icon:'⚙' },
+  { cat:'Perspective', time:'7 min', title:'Europe × China: Cooperation and Competition', text:'How European brands can partner with Chinese technology leaders without giving up their positioning.', grad:'from-indigo-700 to-brand-500', icon:'⇄' },
+  { cat:'Pricing', time:'6 min', title:'Reverse Target Costing for Import Programmes', text:'Starting from the price the market will pay and working back to the maximum viable kit price.', grad:'from-sky-700 to-cyan-400', icon:'↺' },
+  { cat:'Transformation', time:'9 min', title:'Electrification Roadmaps for Importers', text:'Portfolio, dealer-network and after-sales implications of the shift to battery-electric vehicles.', grad:'from-emerald-700 to-teal-400', icon:'◐' },
+  { cat:'Partnerships', time:'5 min', title:'Building Industrial Ecosystems with Local Partners', text:'Choosing assembly partners and suppliers that create value beyond regulatory compliance.', grad:'from-slate-700 to-brand-600', icon:'⬡' },
+];
+document.getElementById('insightGrid').innerHTML = INSIGHTS.map(a => `
+  <a href="${a.href || '#contact'}" class="group reveal flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+    <div class="relative h-40 bg-gradient-to-br ${a.grad}">
+      <div class="absolute inset-0 opacity-25" style="background-image:radial-gradient(#fff 1px,transparent 1px);background-size:14px 14px"></div>
+      <span class="absolute bottom-4 left-5 font-display text-4xl text-white/90">${a.icon}</span>
+      <span class="absolute right-4 top-4 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-ink">${a.cat}</span>
+    </div>
+    <div class="flex flex-1 flex-col p-6">
+      <h3 class="font-display text-lg font-bold leading-snug text-ink group-hover:text-brand-700">${a.title}</h3>
+      <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600">${a.text}</p>
+      <div class="mt-5 flex items-center justify-between text-xs text-slate-500"><span>${a.time} read</span><span class="font-semibold text-brand-700">Read more →</span></div>
+    </div>
+  </a>`).join('');
+
+// Scroll reveal
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold:.08 }) : null;
+document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
+
+// Active nav link on scroll
+const navA = [...document.querySelectorAll('#navlinks a')];
+const secObs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) navA.forEach(a => {
+  const on = a.getAttribute('href') === '#' + e.target.id && a.getAttribute('href') !== '#contact';
+  a.classList.toggle('text-brand-700', on); a.classList.toggle('bg-brand-50', on); }); }), { rootMargin:'-45% 0px -50% 0px' });
+['home','about','expertise','lab','insights','contact'].forEach(id => secObs.observe(document.getElementById(id)));
+
+document.getElementById('yr').textContent = new Date().getFullYear();
+loadFromHash();
+update();
+if (location.hash.startsWith('#lab?')) setTimeout(() => document.getElementById('lab').scrollIntoView(), 100);
+</script>
+</body>
+</html>
